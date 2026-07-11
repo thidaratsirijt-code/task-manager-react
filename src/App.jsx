@@ -1,47 +1,27 @@
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import Tasks from './pages/Tasks'
+import Profile from './pages/Profile'
 import './App.css'
 
 function App() {
-  const [taskInput, setTaskInput] = useState("")
-  const [tasks, setTasks] = useState([])
-
-  function handleAddTask() {
-    if (taskInput === "") {
-      alert("กรุณาพิมพ์งานก่อนกดเพิ่ม")
-      return
-    }
-
-    setTasks([...tasks, taskInput])
-    setTaskInput("")
-  }
-
-  function handleDeleteTask(indexToDelete) {
-    const updatedTasks = tasks.filter((task, index) => index !== indexToDelete)
-    setTasks(updatedTasks)
-  }
-
   return (
-    <div className="container">
-      <h1>Task Manager</h1>
+    <BrowserRouter>
+      <nav className="navbar">
+        <Link to="/login">Login</Link>
+        <Link to="/dashboard">Dashboard</Link>
+        <Link to="/tasks">Tasks</Link>
+        <Link to="/profile">Profile</Link>
+      </nav>
 
-      <div className="input-area">
-        <input
-          type="text"
-          placeholder="เพิ่มงานใหม่..."
-          value={taskInput}
-          onChange={(e) => setTaskInput(e.target.value)}
-        />
-        <button onClick={handleAddTask}>เพิ่มงาน</button>
-      </div>
-
-      <ul>
-        {tasks.map((task, index) => (
-          <li key={index} onClick={() => handleDeleteTask(index)}>
-            {task}
-          </li>
-        ))}
-      </ul>
-    </div>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/tasks" element={<Tasks />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
