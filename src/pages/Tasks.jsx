@@ -1,55 +1,76 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import TaskItem from '../components/TaskItem'
 import '../App.css'
 
-function Tasks({ tasks, setTasks }) {
+const API_URL = 'http://localhost:3000/api/tasks'
+
+function Tasks() {
+  const [tasks, setTasks] = useState([])
   const [taskInput, setTaskInput] = useState("")
   const [noteInput, setNoteInput] = useState("")
   const [dueDate, setDueDate] = useState("")
   const [filter, setFilter] = useState("all")
 
-  function handleAddTask() {
+  useEffect(() => {
+    fetchTasks()
+  }, [])
+
+  async function fetchTasks() {
+    const response = await fetch(API_URL)
+    const data = await response.json()
+    setTasks(data)
+  }
+
+  async function handleAddTask() {
     if (taskInput === "") {
       alert("กรุณาพิมพ์งานก่อนกดเพิ่ม")
       return
     }
 
-    const newTask = {
-      id: Date.now(),
-      text: taskInput,
-      note: noteInput,
-      completed: false,
-      dueDate: dueDate
-    }
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: taskInput,
+        note: noteInput,
+        dueDate: dueDate
+      })
+    })
 
+    const newTask = await response.json()
     setTasks([...tasks, newTask])
     setTaskInput("")
     setNoteInput("")
     setDueDate("")
   }
 
-  function handleDeleteTask(idToDelete) {
-    setTasks(tasks.filter((task) => task.id !== idToDelete))
+  async function handleDeleteTask(idToDelete) {
+    await fetch(`${API_URL}/${idToDelete}`, { method: 'DELETE' })
+    setTasks(tasks.filter((task) => task._id !== idToDelete))
   }
 
-  function handleToggleComplete(idToToggle) {
-    setTasks(
-      tasks.map((task) =>
-        task.id === idToToggle
-          ? { ...task, completed: !task.completed }
-          : task
-      )
-    )
+  async function handleToggleComplete(idToToggle) {
+    const task = tasks.find((t) => t._id === idToToggle)
+
+    const response = await fetch(`${API_URL}/${idToToggle}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ completed: !task.completed })
+    })
+
+    const updatedTask = await response.json()
+    setTasks(tasks.map((t) => (t._id === idToToggle ? updatedTask : t)))
   }
 
-  function handleEditTask(idToEdit, updatedFields) {
-    setTasks(
-      tasks.map((task) =>
-        task.id === idToEdit
-          ? { ...task, ...updatedFields }
-          : task
-      )
-    )
+  async function handleEditTask(idToEdit, updatedFields) {
+    const response = await fetch(`${API_URL}/${idToEdit}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedFields)
+    })
+
+    const updatedTask = await response.json()
+    setTasks(tasks.map((t) => (t._id === idToEdit ? updatedTask : t)))
   }
 
   const filteredTasks = tasks.filter((task) => {
@@ -109,7 +130,7 @@ function Tasks({ tasks, setTasks }) {
       <ul>
         {filteredTasks.map((task) => (
           <TaskItem
-            key={task.id}
+            key={task._id}
             task={task}
             onDelete={handleDeleteTask}
             onToggle={handleToggleComplete}
