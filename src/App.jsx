@@ -15,6 +15,11 @@ function App() {
     setTaskInput("")
   }
 
+  function handleDeleteTask(indexToDelete) {
+    const updatedTasks = tasks.filter((task, index) => index !== indexToDelete)
+    setTasks(updatedTasks)
+  }
+
   return (
     <div className="container">
       <h1>Task Manager</h1>
@@ -31,7 +36,9 @@ function App() {
 
       <ul>
         {tasks.map((task, index) => (
-          <li key={index}>{task}</li>
+          <li key={index} onClick={() => handleDeleteTask(index)}>
+            {task}
+          </li>
         ))}
       </ul>
     </div>
