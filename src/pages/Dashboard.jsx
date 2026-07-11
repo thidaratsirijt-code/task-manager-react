@@ -1,11 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-function Dashboard({ tasks }) {
+const API_URL = 'http://localhost:3000/api/tasks'
+
+function Dashboard() {
+  const [tasks, setTasks] = useState([])
   const [viewFilter, setViewFilter] = useState(null)
 
-  const totalTasks = tasks.length
-  const completedTasks = tasks.filter((task) => task.completed).length
-  const activeTasks = totalTasks - completedTasks
+  useEffect(() => {
+    fetchTasks()
+  }, [])
+
+  async function fetchTasks() {
+    const response = await fetch(API_URL)
+    const data = await response.json()
+    setTasks(data)
+  }
 
   function isTaskOverdue(task) {
     return (
@@ -15,6 +24,9 @@ function Dashboard({ tasks }) {
     )
   }
 
+  const totalTasks = tasks.length
+  const completedTasks = tasks.filter((task) => task.completed).length
+  const activeTasks = totalTasks - completedTasks
   const overdueTasks = tasks.filter(isTaskOverdue).length
 
   function getFilteredList() {
@@ -65,7 +77,7 @@ function Dashboard({ tasks }) {
       ) : (
         <ul>
           {displayedTasks.map((task) => (
-            <li key={task.id} className={task.completed ? "task-completed" : ""}>
+            <li key={task._id} className={task.completed ? "task-completed" : ""}>
               <div className="task-content">
                 <span className="task-text">{task.text}</span>
                 {task.note && <p className="task-note">📝 {task.note}</p>}

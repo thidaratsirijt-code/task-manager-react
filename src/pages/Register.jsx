@@ -3,24 +3,30 @@ import { useNavigate, Link } from 'react-router-dom'
 
 const API_URL = 'http://localhost:3000/api/auth'
 
-function Login() {
+function Register() {
+  const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
 
   const navigate = useNavigate()
 
-  async function handleLogin() {
-    if (email === "" || password === "") {
-      setError("กรุณากรอกอีเมลและรหัสผ่านให้ครบ")
+  async function handleRegister() {
+    if (name === "" || email === "" || password === "") {
+      setError("กรุณากรอกข้อมูลให้ครบ")
+      return
+    }
+
+    if (password.length < 6) {
+      setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร")
       return
     }
 
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ name, email, password })
       })
 
       const data = await response.json()
@@ -30,10 +36,8 @@ function Login() {
         return
       }
 
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
-
-      navigate("/dashboard")
+      alert("สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ")
+      navigate("/login")
     } catch (err) {
       setError("เกิดข้อผิดพลาด กรุณาลองใหม่")
     }
@@ -41,13 +45,21 @@ function Login() {
 
   return (
     <div className="container">
-      <h1>เข้าสู่ระบบ</h1>
+      <h1>สมัครสมาชิก</h1>
+
+      <div className="form-group">
+        <label>ชื่อ</label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
 
       <div className="form-group">
         <label>อีเมล</label>
         <input
           type="email"
-          placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -57,7 +69,6 @@ function Login() {
         <label>รหัสผ่าน</label>
         <input
           type="password"
-          placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -65,13 +76,13 @@ function Login() {
 
       {error && <p className="error-text">{error}</p>}
 
-      <button onClick={handleLogin}>เข้าสู่ระบบ</button>
+      <button onClick={handleRegister}>สมัครสมาชิก</button>
 
       <p style={{ marginTop: "15px", textAlign: "center" }}>
-        ยังไม่มีบัญชี? <Link to="/register">สมัครสมาชิก</Link>
+        มีบัญชีแล้ว? <Link to="/login">เข้าสู่ระบบ</Link>
       </p>
     </div>
   )
 }
 
-export default Login
+export default Register
