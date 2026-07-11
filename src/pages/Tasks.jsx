@@ -4,6 +4,9 @@ import '../App.css'
 
 function Tasks({ tasks, setTasks }) {
   const [taskInput, setTaskInput] = useState("")
+  const [noteInput, setNoteInput] = useState("")
+  const [dueDate, setDueDate] = useState("")
+  const [filter, setFilter] = useState("all")
 
   function handleAddTask() {
     if (taskInput === "") {
@@ -11,14 +14,49 @@ function Tasks({ tasks, setTasks }) {
       return
     }
 
-    setTasks([...tasks, taskInput])
+    const newTask = {
+      id: Date.now(),
+      text: taskInput,
+      note: noteInput,
+      completed: false,
+      dueDate: dueDate
+    }
+
+    setTasks([...tasks, newTask])
     setTaskInput("")
+    setNoteInput("")
+    setDueDate("")
   }
 
-  function handleDeleteTask(indexToDelete) {
-    const updatedTasks = tasks.filter((task, index) => index !== indexToDelete)
-    setTasks(updatedTasks)
+  function handleDeleteTask(idToDelete) {
+    setTasks(tasks.filter((task) => task.id !== idToDelete))
   }
+
+  function handleToggleComplete(idToToggle) {
+    setTasks(
+      tasks.map((task) =>
+        task.id === idToToggle
+          ? { ...task, completed: !task.completed }
+          : task
+      )
+    )
+  }
+
+  function handleEditTask(idToEdit, updatedFields) {
+    setTasks(
+      tasks.map((task) =>
+        task.id === idToEdit
+          ? { ...task, ...updatedFields }
+          : task
+      )
+    )
+  }
+
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === "active") return !task.completed
+    if (filter === "completed") return task.completed
+    return true
+  })
 
   return (
     <div className="container">
@@ -31,16 +69,51 @@ function Tasks({ tasks, setTasks }) {
           value={taskInput}
           onChange={(e) => setTaskInput(e.target.value)}
         />
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
         <button onClick={handleAddTask}>เพิ่มงาน</button>
       </div>
 
+      <input
+        type="text"
+        className="note-input-full"
+        placeholder="โน้ตเพิ่มเติม (ไม่บังคับ)..."
+        value={noteInput}
+        onChange={(e) => setNoteInput(e.target.value)}
+      />
+
+      <div className="filter-area">
+        <button
+          className={filter === "all" ? "active-filter" : ""}
+          onClick={() => setFilter("all")}
+        >
+          ทั้งหมด
+        </button>
+        <button
+          className={filter === "active" ? "active-filter" : ""}
+          onClick={() => setFilter("active")}
+        >
+          ยังไม่เสร็จ
+        </button>
+        <button
+          className={filter === "completed" ? "active-filter" : ""}
+          onClick={() => setFilter("completed")}
+        >
+          เสร็จแล้ว
+        </button>
+      </div>
+
       <ul>
-        {tasks.map((task, index) => (
+        {filteredTasks.map((task) => (
           <TaskItem
-            key={index}
+            key={task.id}
             task={task}
-            index={index}
             onDelete={handleDeleteTask}
+            onToggle={handleToggleComplete}
+            onEdit={handleEditTask}
           />
         ))}
       </ul>

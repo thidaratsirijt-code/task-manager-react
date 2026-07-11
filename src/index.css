@@ -109,3 +109,64 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+.filter-area {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filter-area button {
+  padding: 8px 15px;
+  border: 1px solid #ccc;
+  background-color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.active-filter {
+  background-color: #4CAF50 !important;
+  color: white;
+  border-color: #4CAF50 !important;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.task-text {
+  flex: 1;
+}
+
+.task-completed .task-text {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.due-date {
+  font-size: 13px;
+  color: #666;
+}
+
+.due-date.overdue {
+  color: red;
+  font-weight: bold;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+.overdue-card h2 {
+  color: #e74c3c;
+}
