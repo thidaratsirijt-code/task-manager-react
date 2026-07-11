@@ -96,3 +96,23 @@ li:hover {
   color: red;
   font-size: 14px;
 }
+.stats {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  flex: 1;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stat-card h2 {
+  font-size: 32px;
+  color: #4CAF50;
+  margin: 0;
+}

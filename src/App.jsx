@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -6,6 +7,8 @@ import Profile from './pages/Profile'
 import './App.css'
 
 function App() {
+  const [tasks, setTasks] = useState([])
+
   return (
     <BrowserRouter>
       <nav className="navbar">
@@ -17,8 +20,8 @@ function App() {
 
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/tasks" element={<Tasks />} />
+        <Route path="/dashboard" element={<Dashboard tasks={tasks} />} />
+        <Route path="/tasks" element={<Tasks tasks={tasks} setTasks={setTasks} />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>

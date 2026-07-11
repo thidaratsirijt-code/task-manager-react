@@ -2,9 +2,8 @@ import { useState } from 'react'
 import TaskItem from '../components/TaskItem'
 import '../App.css'
 
-function Tasks() {
+function Tasks({ tasks, setTasks }) {
   const [taskInput, setTaskInput] = useState("")
-  const [tasks, setTasks] = useState([])
 
   function handleAddTask() {
     if (taskInput === "") {
